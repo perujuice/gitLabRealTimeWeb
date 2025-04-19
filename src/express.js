@@ -36,6 +36,21 @@ app.get('/test-broadcast', (req, res) => {
   res.send('Broadcast sent.')
 })
 
+app.post('/webhook', (req, res) => {
+  const secret = req.headers['x-gitlab-token']
+
+  if (secret !== process.env.WEBHOOK_SECRET) {
+    console.log('Webhook token invalid')
+    return res.status(401).send('Unauthorized')
+  }
+
+  const payload = req.body
+  console.log('Webhook received:', JSON.stringify(payload, null, 2))
+
+  res.status(200).send('OK')
+})
+
+
   
 export default (port = process.env.PORT || 3000) => {
   server.listen(port, () => {
