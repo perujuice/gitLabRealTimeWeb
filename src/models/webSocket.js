@@ -8,6 +8,7 @@ const wsServer = new WebSocketServer({
 
 export default wsServer
 
+// Establish a connection with the client
 wsServer.on('connection', (ws) => {
     console.log('Client connected')
 
@@ -22,8 +23,7 @@ wsServer.on('connection', (ws) => {
 
 
 /**
- * Broadcast to all connected clients (maybe skip sender? Figure out later).
- * You can reuse this from server.js/webhook route.
+ * Broadcast to all connected clients.
  */
 wsServer.broadcast = (data) => {
   console.log('Broadcasting to all clients:', data)

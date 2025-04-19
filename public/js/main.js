@@ -1,18 +1,29 @@
-console.log('Hello from the main.js client-side script!')
+const issueList = document.getElementById('issue-list');
 
-const issueList = document.getElementById('issue-list')
-const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
-const socket = new WebSocket(`${protocol}//${window.location.host}`)
+function connectWebSocket() {
+  const socket = new WebSocket(`${window.location.protocol.replace('http', 'ws')}//${window.location.host}`)
 
+  socket.onopen = () => {
+    console.log(' WebSocket connection opened')
+  };
 
-socket.onopen = () => {
-  console.log('WebSocket connection opened')
+  socket.onmessage = (event) => {
+    const data = JSON.parse(event.data)
+    handleWebSocketMessage(data)
+  };
+
+  socket.onclose = () => {
+    console.warn(' WebSocket closed, retrying in 3s...')
+    setTimeout(connectWebSocket, 30000) // reconnect after delay
+  };
+
+  socket.onerror = (err) => {
+    console.error('WebSocket error:', err.message)
+    socket.close()
+  };
 }
 
-socket.onmessage = (event) => {
-  const data = JSON.parse(event.data)
-  console.log('Received:', data)
-
+function handleWebSocketMessage(data) {
   if (data.type === 'issue') {
     const id = data.id
 
@@ -27,16 +38,18 @@ socket.onmessage = (event) => {
       item.textContent = newText
       issueList.prepend(item)
     }
-  } else if (data.type === 'welcome') {
-    const item = document.createElement('li')
-    item.textContent = `[welcome] ${data.message}`
-    issueList.prepend(item)
   }
 }
 
+connectWebSocket()
 
 fetch('/issues')
-  .then(res => res.json())
+  .then(res => {
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`)
+    }
+    return res.json()
+  })
   .then(data => {
     issueList.innerHTML = '' // clear existing items
     data.forEach(issue => {
@@ -46,3 +59,6 @@ fetch('/issues')
       issueList.appendChild(item)
     })
   })
+  .catch(err => {
+    console.error('Failed to fetch issues:', err.message)
+  });

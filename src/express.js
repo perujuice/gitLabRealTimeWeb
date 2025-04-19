@@ -1,72 +1,31 @@
 import express from 'express'
 import http from 'http'
-import wsServer from './models/webSocket.js'
 import logger from 'morgan'
 import dotenv from 'dotenv'
-import { fetchIssues } from './models/gitLabApi.js'
+import apiRoutes from './routes/apiRoutes.js'
+import wsServer from './models/webSocket.js'
 
-dotenv.config() // Load environment variables from .env file
+dotenv.config()
 const app = express()
-const server = http.createServer(app)
+const server = http.createServer(app) // Create an HTTP server using Express
 
-// Attach WebSocket upgrade
+// Initialize WebSocket server with the HTTP server
 server.on('upgrade', (req, socket, head) => {
-    wsServer.handleUpgrade(req, socket, head, (ws) => {
-      wsServer.emit('connection', ws, req)
-    })
+  wsServer.handleUpgrade(req, socket, head, (ws) => {
+    wsServer.emit('connection', ws, req)
   })
+})
 
+// Middleware setup
 app.use(logger('dev'))
-app.use(express.static('public')) // Serve static files from the public directory
+app.use(express.static('public'))
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 
+// Set all routes to use the apiRoutes module
+app.use('/', apiRoutes)
 
-app.get('/issues', async (req, res) => {
-  res.set('Cache-Control', 'no-store')
-  const issues = await fetchIssues(process.env.PROJECT_ID)
-  console.log('from express.js fetch: ', issues)
-  res.json(issues)
-})
-
-
-app.get('/test-broadcast', (req, res) => {
-  wsServer.broadcast({
-    type: 'test',
-    message: 'This is a broadcast from the server!'
-  })
-  res.send('Broadcast sent.')
-})
-
-app.post('/webhook', (req, res) => {
-  const token = req.headers['x-gitlab-token']
-
-  if (token !== process.env.WEBHOOK_SECRET) {
-    console.log('Invalid GitLab webhook token')
-    return res.status(401).send('Unauthorized')
-  }
-
-  const payload = req.body
-
-  if (payload.object_kind === 'issue') {
-    const issue = payload.object_attributes
-
-    const message = {
-      type: 'issue',
-      id: issue.id,
-      action: issue.action,
-      title: issue.title,
-      state: issue.state,
-      url: issue.url
-    }
-
-    wsServer.broadcast(message)
-    console.log('Webhook event broadcasted to clients:', message)
-  }
-
-  res.status(200).send('OK')
-})
-
+// Let the server listen on the port specified in the environment variables or default to 3000
 export default (port = process.env.PORT || 3000) => {
   server.listen(port, () => {
     console.log(`Server is running on port ${port}. NODE_ENV is set to ${process.env.NODE_ENV}`)
