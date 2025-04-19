@@ -17,16 +17,14 @@ ws.onmessage = (event) => {
 }
 
 
-/*
-ws.onmessage = (event) => {
-  const issue = JSON.parse(event.data)
+fetch('/issues')
+  .then(res => res.json())
+  .then(data => {
+    data.forEach(issue => {
+      const item = document.createElement('li')
+      item.textContent = `[issue] ${issue.title} (${issue.state})`
+      document.getElementById('issue-list').appendChild(item)
+    })
+  })
+  .catch(err => console.error('Failed to fetch issues:', err))
 
-  const item = document.createElement('li')
-  item.innerHTML = `<strong>[${issue.action}]</strong> ${issue.title} (${issue.state})`
-  issueList.prepend(item)
-}
-
-ws.onclose = () => {
-  console.log('WebSocket closed')
-}
-*/

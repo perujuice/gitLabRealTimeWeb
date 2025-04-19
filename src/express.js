@@ -3,6 +3,7 @@ import http from 'http'
 import wsServer from './models/webSocket.js'
 import logger from 'morgan'
 import dotenv from 'dotenv'
+import { fetchIssues } from './models/gitLabApi.js'
 
 dotenv.config() // Load environment variables from .env file
 const app = express()
@@ -20,11 +21,21 @@ app.use(express.static('public')) // Serve static files from the public director
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 
-// Replace "12345" with your actual GitLab project ID
+
 app.get('/issues', async (req, res) => {
-    const issues = await fetchIssues(process.env.PROJECT_ID)
-    res.json(issues)
+  const issues = await fetchIssues(process.env.PROJECT_ID)
+  res.json(issues)
+})
+
+
+app.get('/test-broadcast', (req, res) => {
+  wsServer.broadcast({
+    type: 'test',
+    message: 'This is a broadcast from the server!'
   })
+  res.send('Broadcast sent.')
+})
+
   
 export default (port = process.env.PORT || 3000) => {
   server.listen(port, () => {
