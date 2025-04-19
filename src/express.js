@@ -37,20 +37,32 @@ app.get('/test-broadcast', (req, res) => {
 })
 
 app.post('/webhook', (req, res) => {
-  const secret = req.headers['x-gitlab-token']
+  const token = req.headers['x-gitlab-token']
 
-  if (secret !== process.env.WEBHOOK_SECRET) {
-    console.log('Webhook token invalid')
+  if (token !== process.env.WEBHOOK_SECRET) {
+    console.log('Invalid GitLab webhook token')
     return res.status(401).send('Unauthorized')
   }
 
   const payload = req.body
-  console.log('Webhook received:', JSON.stringify(payload, null, 2))
+
+  if (payload.object_kind === 'issue') {
+    const issue = payload.object_attributes
+
+    const message = {
+      type: 'issue',
+      action: issue.action,
+      title: issue.title,
+      state: issue.state,
+      url: issue.url
+    }
+
+    wsServer.broadcast(message)
+    console.log('Webhook event broadcasted to clients:', message)
+  }
 
   res.status(200).send('OK')
 })
-
-
   
 export default (port = process.env.PORT || 3000) => {
   server.listen(port, () => {
