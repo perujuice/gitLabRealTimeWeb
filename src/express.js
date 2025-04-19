@@ -23,7 +23,9 @@ app.use(express.json())
 
 
 app.get('/issues', async (req, res) => {
+  res.set('Cache-Control', 'no-store')
   const issues = await fetchIssues(process.env.PROJECT_ID)
+  console.log('from express.js fetch: ', issues)
   res.json(issues)
 })
 
@@ -51,6 +53,7 @@ app.post('/webhook', (req, res) => {
 
     const message = {
       type: 'issue',
+      id: issue.id,
       action: issue.action,
       title: issue.title,
       state: issue.state,
@@ -63,7 +66,7 @@ app.post('/webhook', (req, res) => {
 
   res.status(200).send('OK')
 })
-  
+
 export default (port = process.env.PORT || 3000) => {
   server.listen(port, () => {
     console.log(`Server is running on port ${port}. NODE_ENV is set to ${process.env.NODE_ENV}`)
