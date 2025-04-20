@@ -13,5 +13,26 @@ ul#issue-list li {
 }
 
 ul#issue-list li:hover {
-    background-color: #f1f1f1;
+    background-color: #d2c6c6;
 }
+
+ul#issue-list li strong {
+    font-weight: bold;
+  }
+  
+  ul#issue-list li .timestamp {
+    font-size: 0.85em;
+    color: #555;
+  }
+
+  ul#issue-list li .issue-header {
+    margin-bottom: 4px;
+  }
+  
+  ul#issue-list li .timestamp-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85em;
+    color: #555;
+  }
+  

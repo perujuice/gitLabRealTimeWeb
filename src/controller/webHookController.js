@@ -5,9 +5,9 @@ import wsServer from '../models/webSocket.js'
  * It verifies the webhook token and processes the event based on its type.
  * @param {*} req - The request object containing the webhook payload.
  * @param {*} res - The response object used to send a response back to GitLab.
- * @returns 
+ * @returns {*} errors if the token is invalid or the payload is not an issue event.
  */
-export function handleWebhook(req, res) {
+export function handleWebhook (req, res) {
   const token = req.headers['x-gitlab-token'] // Extract the token from the request headers
   // Check if the token is valid
   if (token !== process.env.WEBHOOK_SECRET) {
@@ -26,7 +26,9 @@ export function handleWebhook(req, res) {
       action: issue.action,
       title: issue.title,
       state: issue.state,
-      url: issue.url
+      url: issue.url,
+      created_at: issue.created_at,
+      updated_at: issue.updated_at
     }
 
     // Broadcast the message to all connected WebSocket clients

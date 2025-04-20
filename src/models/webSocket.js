@@ -1,4 +1,4 @@
-import WebSocket, { WebSocketServer } from 'ws'
+import { WebSocketServer } from 'ws'
 
 // Using noServer so I can attach to my existing HTTP server in express.js
 const wsServer = new WebSocketServer({
@@ -10,20 +10,20 @@ export default wsServer
 
 // Establish a connection with the client
 wsServer.on('connection', (ws) => {
-    console.log('Client connected')
+  console.log('Client connected')
 
-    ws.send(JSON.stringify({ type: 'welcome', message: 'Hello client!' }))
-  
-    ws.on('close', () => {
-      console.log('Client disconnected')
-    })
-  
-    ws.on('error', console.error)
+  ws.send(JSON.stringify({ type: 'welcome', message: 'Hello client!' }))
+
+  ws.on('close', () => {
+    console.log('Client disconnected')
+  })
+
+  ws.on('error', console.error)
 })
-
 
 /**
  * Broadcast to all connected clients.
+ * @param {*} data - The data to send to all clients.
  */
 wsServer.broadcast = (data) => {
   console.log('Broadcasting to all clients:', data)

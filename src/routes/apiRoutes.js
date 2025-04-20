@@ -1,6 +1,6 @@
 import express from 'express'
 import { getIssues } from '../controller/issueController.js'
-import { handleWebhook } from '../controller/webhookController.js'
+import { handleWebhook } from '../controller/webHookController.js'
 import wsServer from '../models/webSocket.js'
 
 const router = express.Router()

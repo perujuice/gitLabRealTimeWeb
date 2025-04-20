@@ -5,7 +5,7 @@ import { fetchIssues } from '../models/gitLabApi.js'
  * @param {*} req The request object
  * @param {*} res The response object
  */
-export async function getIssues(req, res) {
+export async function getIssues (req, res) {
   try {
     res.set('Cache-Control', 'no-store') // avoid caching
     const issues = await fetchIssues(process.env.PROJECT_ID)
