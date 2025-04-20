@@ -40,13 +40,23 @@ export async function closeIssueHandler (req, res) {
 }
 
 /**
- *
- * @param req
- * @param res
+ * Adds a comment to an issue by its ID.
+ * @param {*} req The request object
+ * @param {*} res The response object
+ * @returns {*} Error message if any.
  */
 export async function commentOnIssueHandler (req, res) {
   try {
-    const comment = await commentOnIssue(process.env.PROJECT_ID, req.params.id, req.body.comment)
+    // Fetch all issues to find the specific issue by its global ID
+    const allIssues = await fetchIssues(process.env.PROJECT_ID)
+    const issue = allIssues.find(issue => issue.id.toString() === req.params.id) // Match by global ID
+
+    if (!issue) {
+      return res.status(404).send('Issue not found') // Return 404 if the issue doesn't exist
+    }
+
+    // Use the internal IID to add the comment
+    const comment = await commentOnIssue(process.env.PROJECT_ID, issue.iid, req.body.comment)
     res.json(comment)
   } catch (error) {
     console.error('Error commenting on issue:', error)

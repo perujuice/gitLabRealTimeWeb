@@ -15,7 +15,11 @@ npm start # runs in production (NODE_ENV)
 
 **But this will not work for real time web, that only works on the production server!**
 
+## Security Measures:
+- The express server uses the helmet package, for setting security related HTTP response headers.
+
 ## Extra requirements
 
 - I implemented a richer UI
 - Implemented a button to close an issue
+- Implemented commenting in issues, using gitLabs API

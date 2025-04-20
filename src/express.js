@@ -4,10 +4,13 @@ import logger from 'morgan'
 import dotenv from 'dotenv'
 import apiRoutes from './routes/apiRoutes.js'
 import wsServer from './models/webSocket.js'
+import helmet from 'helmet'
 
 dotenv.config()
 const app = express()
 const server = http.createServer(app) // Create an HTTP server using Express
+
+app.use(helmet()) // Use Helmet for security, setting various HTTP headers
 
 // Initialize WebSocket server with the HTTP server
 server.on('upgrade', (req, socket, head) => {

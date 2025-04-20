@@ -60,6 +60,11 @@ export async function commentOnIssue (projectId, issueIid, comment) {
     body: JSON.stringify({ body: comment })
   })
 
-  if (!res.ok) throw new Error('Failed to add comment')
-  return res.json()
+  if (!res.ok) {
+    const errorText = await res.text()
+    console.error(`Failed to add comment to issue ${issueIid}:`, res.status, errorText)
+    throw new Error('Failed to add comment')
+  }
+
+  return await res.json()
 }
