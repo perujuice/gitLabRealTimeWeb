@@ -1,0 +1,17 @@
+ul#issue-list {
+    list-style: none;
+    padding: 0;
+}
+  
+ul#issue-list li {
+    background: #f9f9f9;
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+ul#issue-list li:hover {
+    background-color: #f1f1f1;
+}

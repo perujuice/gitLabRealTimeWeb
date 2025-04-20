@@ -1,0 +1,21 @@
+footer {
+    text-align: center;
+    margin-top: 50px;
+    font-size: 0.9rem;
+    color: #666;
+    background: linear-gradient(to bottom, #7e38ee, #0f112c); /* Gradient background for a soft look */
+    background-color: #f4c8c8;
+
+    padding: 0; /* Remove padding to avoid offset issues */
+    position: relative; /* Enable positioning for child elements */
+    height: 50px; /* Set a fixed height for the footer */
+}
+
+footer .copyright {
+    position: absolute; /* Position relative to the footer */
+    bottom: 5px; /* Align to the bottom of the footer */
+    right: 10px; /* Align to the right of the footer */
+    color: rgb(253, 216, 216);
+    font-size: 0.8rem; /* Optional: Adjust font size for better fit */
+    margin: 0; /* Remove any default margin from <p> */
+}

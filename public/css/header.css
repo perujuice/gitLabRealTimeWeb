@@ -1,0 +1,11 @@
+header {
+    background: linear-gradient(to top, #7e38ee, #0f112c); /* Gradient background for a soft look */
+    color: white;
+    padding: 20px;
+    text-align: center;
+  }
+
+  header h1 {
+    font-size: 2rem;
+    font-family: 'Courier New', Courier, monospace;
+  }

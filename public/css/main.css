@@ -1,0 +1,25 @@
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    background-color: #7e38ee;
+    color: #333;
+    padding: 0; /* Remove padding to avoid layout issues */
+    margin: 0; /* Remove margin for consistent layout */
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
+    min-height: 100vh; /* Ensure body takes full viewport height */
+  }
+  
+  main {
+    margin: 20px auto;
+    max-width: 800px;
+    background: rgb(240, 203, 203);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    flex: 1; /* Push the footer to the bottom */
+  }
+  
+  section {
+    margin-top: 20px;
+  }
