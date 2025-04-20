@@ -10,6 +10,7 @@ ul#issue-list li {
     border: 1px solid #ddd;
     border-radius: 4px;
     transition: background-color 0.3s ease;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
 ul#issue-list li:hover {
@@ -26,7 +27,7 @@ ul#issue-list li strong {
   }
 
   ul#issue-list li .issue-header {
-    margin-bottom: 4px;
+    margin-bottom: 2px;
   }
   
   ul#issue-list li .timestamp-row {

@@ -18,3 +18,4 @@ npm start # runs in production (NODE_ENV)
 ## Extra requirements
 
 - I implemented a richer UI
+- Implemented a button to close an issue

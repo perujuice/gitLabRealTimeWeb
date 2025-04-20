@@ -36,11 +36,16 @@ function formatIssueText (issue) {
   const created = formatRelativeTime(issue.created_at)
   const updated = formatRelativeTime(issue.updated_at)
 
-  return `<div class="issue-header"><strong>[issue]</strong> ${issue.title} (${issue.state})</div>
-    <div class="timestamp-row">
-      <span class="timestamp">Created: ${created}</span>
-      <span class="timestamp">Updated: ${updated}</span>
-    </div>`
+  return `
+  <div class="issue-header"><strong>[issue]</strong> ${issue.title} (${issue.state})</div>
+  <div class="timestamp-row">
+    <span class="timestamp">Created: ${created}</span>
+    <span class="timestamp">Updated: ${updated}</span>
+  </div>
+  <div class="actions">
+    <button class="close-btn" data-id="${issue.id}">Close</button>
+    <button class="comment-btn" data-id="${issue.id}">Comment</button>
+  </div>`
 }
 
 /**
@@ -64,6 +69,25 @@ function handleWebSocketMessage (data) {
     }
   }
 }
+
+document.addEventListener('click', (e) => {
+  if (e.target.classList.contains('close-btn')) {
+    const id = e.target.dataset.id
+    fetch(`/issues/${id}/close`, { method: 'POST' }) // or PATCH depending on backend
+  }
+
+  if (e.target.classList.contains('comment-btn')) {
+    const id = e.target.dataset.id
+    const comment = prompt('Enter your comment:')
+    if (comment) {
+      fetch(`/issues/${id}/comments`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ comment })
+      })
+    }
+  }
+})
 
 connectWebSocket()
 
