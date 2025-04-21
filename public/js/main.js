@@ -7,6 +7,20 @@ const issueList = document.getElementById('issue-list')
 connectWebSocket(issueList)
 fetchAndRenderIssues(issueList)
 
+const eventList = document.getElementById('issue-list')
+
+const filterRadios = document.querySelectorAll('#event-filter input[name="filter"]')
+
+filterRadios.forEach(radio => {
+  radio.addEventListener('change', () => {
+    const selected = document.querySelector('#event-filter input[name="filter"]:checked').value
+    Array.from(eventList.children).forEach(item => {
+      const type = item.getAttribute('data-type')
+      item.style.display = (selected === 'all' || type === selected) ? '' : 'none'
+    })
+  })
+})
+
 document.addEventListener('click', (e) => {
   const id = e.target.dataset.id
   if (!id) return

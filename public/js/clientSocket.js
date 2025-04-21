@@ -1,4 +1,5 @@
 import { renderIssue } from './issues.js'
+import { renderCommit } from './commits.js'
 
 /**
  * Connects to the WebSocket server and listens for incoming messages.
@@ -13,6 +14,9 @@ export default function connectWebSocket (container) {
     const data = JSON.parse(event.data)
     if (data.type === 'issue' && data.state === 'open') {
       renderIssue(data, container)
+    }
+    if (data.type === 'commit') {
+      renderCommit(data, container)
     }
   }
 
