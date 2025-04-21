@@ -5,6 +5,7 @@ import dotenv from 'dotenv'
 import apiRoutes from './routes/apiRoutes.js'
 import wsServer from './models/webSocket.js'
 import helmet from 'helmet'
+import session from 'express-session'
 
 dotenv.config()
 const app = express()
@@ -24,6 +25,13 @@ app.use(logger('dev'))
 app.use(express.static('public'))
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
+
+app.use(session({
+  secret: 'supersecretkey',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: true } // true with HTTPS for a proper setup
+}))
 
 // Set all routes to use the apiRoutes module
 app.use('/', apiRoutes)

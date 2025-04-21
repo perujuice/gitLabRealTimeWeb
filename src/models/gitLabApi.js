@@ -1,12 +1,13 @@
 /**
  * Method to fetch issues from GitLab API.
  * @param {*} projectId - The project ID to fetch issues from.
+ * @param {*} token - The access token for authentication.
  * @returns {*} A promise that resolves to an array of issues.
  */
-export async function fetchIssues (projectId) {
+export async function fetchIssues (projectId, token = process.env.GITLAB_TOKEN) {
   const response = await fetch(`https://gitlab.lnu.se/api/v4/projects/${projectId}/issues`, {
     headers: {
-      Authorization: `Bearer ${process.env.GITLAB_TOKEN}`
+      Authorization: `Bearer ${token}`
     }
   })
 
@@ -22,13 +23,14 @@ export async function fetchIssues (projectId) {
  * Closes an issue in GitLab.
  * @param {*} projectId The project ID to close the issue in.
  * @param {*} issueIid The issue IID to close.
+ * @param {*} token Optional user token (fallback to default).
  * @returns {*} The response from the GitLab API.
  */
-export async function closeIssue (projectId, issueIid) {
+export async function closeIssue (projectId, issueIid, token = process.env.GITLAB_TOKEN) {
   const res = await fetch(`https://gitlab.lnu.se/api/v4/projects/${projectId}/issues/${issueIid}`, {
     method: 'PUT',
     headers: {
-      Authorization: `Bearer ${process.env.GITLAB_TOKEN}`,
+      Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({ state_event: 'close' })
@@ -48,13 +50,14 @@ export async function closeIssue (projectId, issueIid) {
  * @param {*} projectId The project ID to add the comment to.
  * @param {*} issueIid The issue IID to add the comment to.
  * @param {*} comment The comment text to add.
+ * @param {*} token Optional user token (fallback to default).
  * @returns {*} The response from the GitLab API.
  */
-export async function commentOnIssue (projectId, issueIid, comment) {
+export async function commentOnIssue (projectId, issueIid, comment, token = process.env.GITLAB_TOKEN) {
   const res = await fetch(`https://gitlab.lnu.se/api/v4/projects/${projectId}/issues/${issueIid}/notes`, {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${process.env.GITLAB_TOKEN}`,
+      Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({ body: comment })
@@ -72,12 +75,13 @@ export async function commentOnIssue (projectId, issueIid, comment) {
 /**
  * Fetches commits from GitLab API.
  * @param {*} projectId - The project ID to fetch commits from.
+ * @param {*} token - Optional access token.
  * @returns {*} A promise that resolves to an array of commits.
  */
-export async function fetchCommits (projectId) {
+export async function fetchCommits (projectId, token = process.env.GITLAB_TOKEN) {
   const response = await fetch(`https://gitlab.lnu.se/api/v4/projects/${projectId}/repository/commits`, {
     headers: {
-      Authorization: `Bearer ${process.env.GITLAB_TOKEN}`
+      Authorization: `Bearer ${token}`
     }
   })
 
@@ -87,4 +91,34 @@ export async function fetchCommits (projectId) {
   }
 
   return await response.json()
+}
+
+/**
+ *
+ * @param projectId
+ * @param token
+ */
+export async function createWebhook (projectId, token) {
+  const res = await fetch(`https://gitlab.lnu.se/api/v4/projects/${projectId}/hooks`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      url: 'https://cscloud9-62.lnu.se/webhook',
+      issues_events: true,
+      push_events: true,
+      token: process.env.WEBHOOK_SECRET, // the same one your server checks
+      enable_ssl_verification: true
+    })
+  })
+
+  if (!res.ok) {
+    const errorText = await res.text()
+    console.error('Webhook creation failed:', res.status, errorText)
+    throw new Error('Failed to create webhook')
+  }
+
+  return await res.json()
 }

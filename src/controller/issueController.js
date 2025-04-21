@@ -8,7 +8,10 @@ import { fetchIssues, closeIssue, commentOnIssue } from '../models/gitLabAPI.js'
 export async function getIssues (req, res) {
   try {
     res.set('Cache-Control', 'no-store') // avoid caching
-    const issues = await fetchIssues(process.env.PROJECT_ID)
+    const token = req.session?.gitlabToken || process.env.GITLAB_TOKEN
+    const projectId = process.env.PROJECT_ID
+
+    const issues = await fetchIssues(projectId, token)
     res.json(issues)
   } catch (error) {
     console.error('Error fetching issues:', error)
@@ -24,7 +27,10 @@ export async function getIssues (req, res) {
  */
 export async function closeIssueHandler (req, res) {
   try {
-    const allIssues = await fetchIssues(process.env.PROJECT_ID)
+    const token = req.session?.gitlabToken || process.env.GITLAB_TOKEN
+    const projectId = process.env.PROJECT_ID
+
+    const allIssues = await fetchIssues(projectId, token)
     const issue = allIssues.find(issue => issue.id.toString() === req.params.id) // find the specific issue by ID to close.
 
     if (!issue) {
@@ -48,7 +54,10 @@ export async function closeIssueHandler (req, res) {
 export async function commentOnIssueHandler (req, res) {
   try {
     // Fetch all issues to find the specific issue by its global ID
-    const allIssues = await fetchIssues(process.env.PROJECT_ID)
+    const token = req.session?.gitlabToken || process.env.GITLAB_TOKEN
+    const projectId = process.env.PROJECT_ID
+
+    const allIssues = await fetchIssues(projectId, token)
     const issue = allIssues.find(issue => issue.id.toString() === req.params.id) // Match by global ID
 
     if (!issue) {

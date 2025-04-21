@@ -1,8 +1,8 @@
 import express from 'express'
 import { getIssues, closeIssueHandler, commentOnIssueHandler } from '../controller/issueController.js'
 import { handleWebhook } from '../controller/webHookController.js'
-import wsServer from '../models/webSocket.js'
 import { getCommits } from '../controller/commitsController.js'
+import { gitlabOAuthCallback, createWebhookHandler } from '../controller/userController.js'
 
 const router = express.Router()
 
@@ -11,10 +11,9 @@ router.post('/issues/:id/close', closeIssueHandler) // Close an issue by its ID
 router.post('/issues/:id/comments', commentOnIssueHandler) // Add a comment to an issue by its ID
 router.get('/commits', getCommits) // Fetch commits from the GitHub repository
 router.post('/webhook', handleWebhook) // Handle incoming webhook events from GitHub
-// This route is for testing purposes only. It sends a broadcast message to all connected WebSocket clients.
-router.get('/test-broadcast', (req, res) => {
-  wsServer.broadcast({ type: 'test', message: 'This is a broadcast from the server!' })
-  res.send('Broadcast sent.')
-})
+
+router.post('/projects/:id/webhook', createWebhookHandler) // Create a webhook for a specific project
+router.get('/oauth/callback', gitlabOAuthCallback)
+router.post('/projects/:id/webhook', createWebhookHandler)
 
 export default router

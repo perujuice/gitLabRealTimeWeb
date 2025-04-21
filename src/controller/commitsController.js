@@ -7,7 +7,10 @@ import { fetchCommits } from '../models/gitLabApi.js'
  */
 export async function getCommits (req, res) {
   try {
-    const commits = await fetchCommits(process.env.PROJECT_ID)
+    const token = req.session?.gitlabToken || process.env.GITLAB_TOKEN
+    const projectId = process.env.PROJECT_ID
+
+    const commits = await fetchCommits(projectId, token)
     res.json(commits)
   } catch (err) {
     console.error('Error fetching commits:', err)
