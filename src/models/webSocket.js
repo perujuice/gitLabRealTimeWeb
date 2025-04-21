@@ -11,13 +11,9 @@ export default wsServer
 // Establish a connection with the client
 wsServer.on('connection', (ws) => {
   console.log('Client connected')
-
-  ws.send(JSON.stringify({ type: 'welcome', message: 'Hello client!' }))
-
   ws.on('close', () => {
     console.log('Client disconnected')
   })
-
   ws.on('error', console.error)
 })
 

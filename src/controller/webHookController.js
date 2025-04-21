@@ -9,14 +9,16 @@ import wsServer from '../models/webSocket.js'
  */
 export function handleWebhook (req, res) {
   const token = req.headers['x-gitlab-token'] // Extract the token from the request headers
-  // Check if the token is valid
+
   if (token !== process.env.WEBHOOK_SECRET) {
     console.log('Invalid GitLab webhook token')
     return res.status(401).send('Unauthorized')
   }
 
-  const payload = req.body // Extract the payload from the request body
+  const payload = req.body
+  console.log('Received webhook:', payload.object_kind)
 
+  // Handle issue events
   if (payload.object_kind === 'issue') {
     const issue = payload.object_attributes
 
@@ -31,10 +33,25 @@ export function handleWebhook (req, res) {
       updated_at: issue.updated_at
     }
 
-    // Broadcast the message to all connected WebSocket clients
-    wsServer.broadcast(message) // This function is defined in the WebSocket.js model.
-    console.log('Webhook event broadcasted to clients:', message)
+    wsServer.broadcast(message)
+    console.log('Issue webhook broadcasted:', message)
   }
 
+  // Handle commit events from push webhook
+  if (payload.object_kind === 'push' && Array.isArray(payload.commits)) {
+    payload.commits.forEach(commit => {
+      const message = {
+        type: 'commit',
+        id: commit.id,
+        message: commit.message,
+        author_name: commit.author.name,
+        timestamp: commit.timestamp,
+        url: commit.url
+      }
+
+      wsServer.broadcast(message)
+      console.log('Commit webhook broadcasted:', message)
+    })
+  }
   res.status(200).send('OK')
 }
