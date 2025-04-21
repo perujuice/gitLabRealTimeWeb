@@ -1,7 +1,7 @@
 header {
-    background: linear-gradient(to top, #7e38ee, #0f112c); /* Gradient background for a soft look */
+    background: linear-gradient(to top, hsl(263, 84%, 58%), #0f112c); /* Gradient background for a soft look */
     color: white;
-    padding: 20px;
+    padding: 10px;
     text-align: center;
   }
 

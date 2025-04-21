@@ -14,6 +14,14 @@
 
         <main>
             <section>
+              <fieldset id="event-filter" class="filter-group">
+                <legend>Filter:</legend>
+                <label><input type="radio" name="filter" value="all" checked> All</label>
+                <label><input type="radio" name="filter" value="issue"> Issues</label>
+                <label><input type="radio" name="filter" value="commit"> Commits</label>
+                <label><input type="radio" name="filter" value="tag"> Tags</label>
+              </fieldset>
+
               <ul id="issue-list">
                 <!-- Issues will be added here dynamically -->
               </ul>

@@ -19,21 +19,47 @@ ul#issue-list li:hover {
 
 ul#issue-list li strong {
     font-weight: bold;
-  }
+}
   
-  ul#issue-list li .timestamp {
-    font-size: 0.85em;
-    color: #555;
-  }
+ul#issue-list li .timestamp {
+  font-size: 0.85em;
+  color: #555;
+}
 
-  ul#issue-list li .issue-header {
-    margin-bottom: 2px;
-  }
+ul#issue-list li .issue-header {
+  margin-bottom: 2px;
+}
+
+ul#issue-list li .timestamp-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85em;
+  color: #555;
+}
+
+.issue-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.issue-footer .timestamps {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.85rem;
+  color: #4b5563;
+}
+
+.issue-footer .timestamps span {
+  margin-bottom: 2px;
+}
+
+.issue-footer .actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
   
-  ul#issue-list li .timestamp-row {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.85em;
-    color: #555;
-  }
   
