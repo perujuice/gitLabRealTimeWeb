@@ -1,7 +1,11 @@
-import { createWebhook } from '../models/gitLabApi.js'
+import { createWebhook, fetchUserProjects } from '../models/gitLabApi.js'
 import fetch from 'node-fetch'
 
-
+/**
+ *
+ * @param req
+ * @param res
+ */
 export async function gitlabOAuthCallback (req, res) {
   const code = req.query.code
   if (!code) return res.status(400).send('Missing OAuth code')
@@ -29,7 +33,12 @@ export async function gitlabOAuthCallback (req, res) {
   }
 }
 
-export async function createWebhookHandler(req, res) {
+/**
+ *
+ * @param req
+ * @param res
+ */
+export async function createWebhookHandler (req, res) {
   const token = req.session?.gitlabToken
   const projectId = req.params.id
 
@@ -49,17 +58,15 @@ export async function createWebhookHandler(req, res) {
  * @param req
  * @param res
  */
-export async function createWebhookHandler (req, res) {
+export async function listUserProjects (req, res) {
   const token = req.session?.gitlabToken
-  const projectId = req.params.id
-
   if (!token) return res.status(401).send('User not logged in')
 
   try {
-    const result = await createWebhook(projectId, token)
-    res.json({ success: true, webhook: result })
+    const projects = await fetchUserProjects(token)
+    res.json(projects)
   } catch (err) {
-    console.error('Webhook creation error:', err)
-    res.status(500).send('Failed to create webhook')
+    console.error('Error listing projects:', err)
+    res.status(500).send('Failed to list user projects')
   }
 }

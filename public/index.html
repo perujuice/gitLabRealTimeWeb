@@ -10,22 +10,34 @@
     <body>
         <header>
             <h1>GitLab Real Time Web feed</h1>
+            <div id="auth-controls">
+              <a href="/auth/gitlab"> Log in with GitLab</a>
+            </div>
         </header>
 
         <main>
-            <section>
-              <fieldset id="event-filter" class="filter-group">
-                <legend>Filter:</legend>
-                <label><input type="radio" name="filter" value="all" checked> All</label>
-                <label><input type="radio" name="filter" value="issue"> Issues</label>
-                <label><input type="radio" name="filter" value="commit"> Commits</label>
-                <label><input type="radio" name="filter" value="tag"> Tags</label>
-              </fieldset>
+          <div id="project-picker" style="margin-bottom: 1em;">
+            <label for="project-select">Choose a repository to monitor:</label>
+            <select id="project-select">
+              <option value="">(default project)</option>
+              <!-- More projects will be loaded dynamically -->
+            </select>
+            <button id="set-project-btn">Set and Watch</button>
+          </div>
+          
+          <section>
+            <fieldset id="event-filter" class="filter-group">
+              <legend>Filter:</legend>
+              <label><input type="radio" name="filter" value="all" checked> All</label>
+              <label><input type="radio" name="filter" value="issue"> Issues</label>
+              <label><input type="radio" name="filter" value="commit"> Commits</label>
+              <label><input type="radio" name="filter" value="tag"> Tags</label>
+            </fieldset>
 
-              <ul id="event-list">
-                <!-- Issues will be added here dynamically -->
-              </ul>
-            </section>
+            <ul id="event-list">
+              <!-- Issues will be added here dynamically -->
+            </ul>
+          </section>
         </main>
 
         <footer>

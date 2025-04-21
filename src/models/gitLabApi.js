@@ -122,3 +122,23 @@ export async function createWebhook (projectId, token) {
 
   return await res.json()
 }
+
+/**
+ *
+ * @param token
+ */
+export async function fetchUserProjects (token) {
+  const response = await fetch('https://gitlab.lnu.se/api/v4/projects?membership=true&simple=true&per_page=100', {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+
+  if (!response.ok) {
+    const errorText = await response.text()
+    console.error('Failed to fetch user projects:', response.status, errorText)
+    throw new Error('Could not fetch user projects')
+  }
+
+  return await response.json()
+}

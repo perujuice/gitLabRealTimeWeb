@@ -66,3 +66,33 @@ document.addEventListener('click', (e) => {
     }
   }
 })
+
+fetch('/projects')
+  .then(res => {
+    if (!res.ok) throw new Error('Not logged in or failed to fetch projects')
+    return res.json()
+  })
+  .then(projects => {
+    const select = document.getElementById('project-select')
+    projects.forEach(p => {
+      const option = document.createElement('option')
+      option.value = p.id
+      option.textContent = `${p.name_with_namespace}`
+      select.appendChild(option)
+    })
+  })
+  .catch(() => {
+    document.getElementById('project-picker').style.display = 'none'
+  })
+
+document.getElementById('set-project-btn').addEventListener('click', () => {
+  const projectId = document.getElementById('project-select').value
+  if (!projectId) return alert('Please select a project.')
+
+  fetch(`/projects/${projectId}/webhook`, { method: 'POST' })
+    .then(res => {
+      if (!res.ok) throw new Error()
+      alert('Webhook created! Events from this repo will now appear in real time.')
+    })
+    .catch(() => alert('Failed to create webhook for that project.'))
+})
