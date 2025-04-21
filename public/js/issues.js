@@ -51,14 +51,17 @@ export function fetchAndRenderIssues (container) {
   fetch('/issues')
     .then(res => res.ok ? res.json() : Promise.reject(res.status))
     .then(data => {
-      container.innerHTML = ''
-      data.filter(i => i.state === 'opened').forEach(issue => {
-        const li = document.createElement('li')
-        li.setAttribute('data-id', issue.id)
-        li.setAttribute('data-type', 'issue')
-        li.innerHTML = formatIssueHtml(issue)
-        container.appendChild(li)
-      })
+      data
+        .filter(i => i.state === 'opened')
+        .forEach(issue => {
+          if (container.querySelector(`li[data-id="${issue.id}"]`)) return // ✅ prevent dupes
+
+          const li = document.createElement('li')
+          li.setAttribute('data-id', issue.id)
+          li.setAttribute('data-type', 'issue')
+          li.innerHTML = formatIssueHtml(issue)
+          container.appendChild(li)
+        })
     })
     .catch(err => {
       console.error('Failed to fetch issues:', err)

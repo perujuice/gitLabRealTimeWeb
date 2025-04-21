@@ -68,3 +68,23 @@ export async function commentOnIssue (projectId, issueIid, comment) {
 
   return await res.json()
 }
+
+/**
+ * Fetches commits from GitLab API.
+ * @param {*} projectId - The project ID to fetch commits from.
+ * @returns {*} A promise that resolves to an array of commits.
+ */
+export async function fetchCommits (projectId) {
+  const response = await fetch(`https://gitlab.lnu.se/api/v4/projects/${projectId}/repository/commits`, {
+    headers: {
+      Authorization: `Bearer ${process.env.GITLAB_TOKEN}`
+    }
+  })
+
+  if (!response.ok) {
+    console.error(`GitLab API error: ${response.statusText}`)
+    return []
+  }
+
+  return await response.json()
+}

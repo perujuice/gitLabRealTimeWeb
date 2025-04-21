@@ -6,6 +6,7 @@ import formatRelativeTime from './utils.js'
  * @param {*} container - The container element where the commit item will be rendered.
  */
 export function renderCommit (commit, container) {
+  const time = commit.created_at
   const li = document.createElement('li')
   li.classList.add('commit-item')
   li.setAttribute('data-id', commit.id)
@@ -15,8 +16,7 @@ export function renderCommit (commit, container) {
     <div class="commit-header"><strong>[commit]</strong> ${commit.message}</div>
     <div class="meta">
       <span>By: ${commit.author_name}</span> · 
-      <span>${formatRelativeTime(commit.timestamp)}</span> · 
-      <a href="${commit.url}" target="_blank">View</a>
+      <span>${formatRelativeTime(time)}</span> · 
     </div>
   `
   container.prepend(li)

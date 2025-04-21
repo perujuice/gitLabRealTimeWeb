@@ -45,7 +45,7 @@ export function handleWebhook (req, res) {
         id: commit.id,
         message: commit.message,
         author_name: commit.author.name,
-        timestamp: commit.timestamp,
+        timestamp: commit.created_at,
         url: commit.url
       }
 

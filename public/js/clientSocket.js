@@ -12,9 +12,16 @@ export default function connectWebSocket (container) {
 
   socket.onmessage = (event) => {
     const data = JSON.parse(event.data)
-    if (data.type === 'issue' && data.state === 'open') {
-      renderIssue(data, container)
+
+    if (data.type === 'issue') {
+      const li = container.querySelector(`li[data-id="${data.id}"]`)
+      if (data.state === 'opened') {
+        renderIssue(data, container)
+      } else if (data.state === 'closed' && li) {
+        li.remove()
+      }
     }
+
     if (data.type === 'commit') {
       renderCommit(data, container)
     }
