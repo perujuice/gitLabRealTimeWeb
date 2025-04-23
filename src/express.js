@@ -26,6 +26,8 @@ app.use(express.static('public'))
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 
+app.set('trust proxy', 1) // Trust first proxy
+
 app.use(session({
   secret: 'supersecretkey',
   resave: false,

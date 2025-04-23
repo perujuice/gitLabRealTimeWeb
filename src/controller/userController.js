@@ -24,7 +24,27 @@ export async function gitlabOAuthCallback (req, res) {
     })
 
     const tokenData = await tokenRes.json()
-    req.session.gitlabToken = tokenData.access_token
+    const accessToken = tokenData.access_token
+
+    // Store token in session
+    req.session.gitlabToken = accessToken
+
+    // Fetch user info from GitLab
+    const userRes = await fetch('https://gitlab.lnu.se/api/v4/user', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    })
+
+    const userData = await userRes.json()
+    req.session.user = {
+      id: userData.id,
+      username: userData.username,
+      name: userData.name,
+      avatar_url: userData.avatar_url
+    }
+
+    console.log('Logged in as:', req.session.user.username) // Log the username
 
     res.redirect('/')
   } catch (err) {
@@ -46,6 +66,7 @@ export async function createWebhookHandler (req, res) {
 
   try {
     const result = await createWebhook(projectId, token)
+    req.session.projectId = projectId
     res.json({ success: true, webhook: result })
   } catch (err) {
     console.error('Webhook creation error:', err)
@@ -68,5 +89,39 @@ export async function listUserProjects (req, res) {
   } catch (err) {
     console.error('Error listing projects:', err)
     res.status(500).send('Failed to list user projects')
+  }
+}
+
+/**
+ *
+ * @param req
+ * @param res
+ */
+export async function logoutHandler (req, res) {
+  req.session.destroy(err => {
+    if (err) {
+      console.error('Error destroying session:', err)
+      return res.status(500).send('Failed to log out')
+    }
+    res.clearCookie('connect.sid', { path: '/' }) // Clear the session cookie
+    res.redirect('/')
+  })
+}
+
+/**
+ * Returns the current logged-in user's basic info
+ * @param {*} req
+ * @param {*} res
+ */
+export function getCurrentUser (req, res) {
+  if (req.session.user) {
+    res.json({
+      loggedIn: true,
+      username: req.session.user.username,
+      name: req.session.user.name,
+      avatar_url: req.session.user.avatar_url
+    })
+  } else {
+    res.json({ loggedIn: false })
   }
 }

@@ -42,7 +42,7 @@ filterRadios.forEach(radio => {
   })
 })
 
-//  Event delegation
+// Event delegation for the event list
 document.addEventListener('click', (e) => {
   const id = e.target.dataset.id
   if (!id) return
@@ -67,13 +67,19 @@ document.addEventListener('click', (e) => {
   }
 })
 
+/**
+ * Fetches projects from the server and populates the project select dropdown.
+ */
 fetch('/projects')
+  // Check if the response is ok. If not, throw an error.
   .then(res => {
     if (!res.ok) throw new Error('Not logged in or failed to fetch projects')
     return res.json()
   })
+  // If the response is ok, return the projects data.
   .then(projects => {
     const select = document.getElementById('project-select')
+    // populate the dropdown with the projects
     projects.forEach(p => {
       const option = document.createElement('option')
       option.value = p.id
@@ -81,10 +87,13 @@ fetch('/projects')
       select.appendChild(option)
     })
   })
+  // If the response is not ok, hide the project picker.
   .catch(() => {
     document.getElementById('project-picker').style.display = 'none'
   })
 
+//  Set project button click event
+//  When the button is clicked, fetch the selected project ID and create a webhook for it.
 document.getElementById('set-project-btn').addEventListener('click', () => {
   const projectId = document.getElementById('project-select').value
   if (!projectId) return alert('Please select a project.')
@@ -92,7 +101,49 @@ document.getElementById('set-project-btn').addEventListener('click', () => {
   fetch(`/projects/${projectId}/webhook`, { method: 'POST' })
     .then(res => {
       if (!res.ok) throw new Error()
-      alert('Webhook created! Events from this repo will now appear in real time.')
+      console.log('Webhook created! Events from this repo will now appear in real time.')
+
+      // Clear DOM
+      eventList.innerHTML = ''
+
+      // Re-fetch content from newly selected project
+      fetch('/issues')
+        .then(res => res.json())
+        .then(data => {
+          data
+            .filter(issue => issue.state === 'opened')
+            .forEach(issue => {
+              const li = document.createElement('li')
+              li.setAttribute('data-id', issue.id)
+              li.setAttribute('data-type', 'issue')
+              li.innerHTML = formatIssueHtml(issue)
+              eventList.appendChild(li)
+            })
+        })
+
+      // Fetch commits from the selected project.
+      fetch('/commits')
+        .then(res => res.json())
+        .then(data => {
+          data.forEach(commit => renderCommit(commit, eventList))
+        })
     })
-    .catch(() => alert('Failed to create webhook for that project.'))
+    // If the response is not ok.
+    .catch(() => console.log('Failed to create webhook for that project.'))
 })
+
+/**
+ * Updates the authentication controls based on the user's login status.
+ * If the user is logged in, it shows a welcome message and a logout link.
+ */
+async function updateAuthControls () {
+  const res = await fetch('/me')
+  const data = await res.json()
+
+  const controls = document.getElementById('auth-controls')
+  controls.innerHTML = data.loggedIn
+    ? `<span>Welcome, ${data.username}</span> <a href="/logout">Log out</a>`
+    : '<a href="/auth/gitlab">Log in with GitLab</a>'
+}
+
+updateAuthControls()

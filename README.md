@@ -23,3 +23,6 @@ npm start # runs in production (NODE_ENV)
 - I implemented a richer UI
 - Implemented a button to close an issue
 - Implemented commenting in issues, using gitLabs API
+- Implemented commits
+- GitLab 
+
