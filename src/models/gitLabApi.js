@@ -1,10 +1,13 @@
+const gitlabApi = {}
+export default gitlabApi
+
 /**
  * Method to fetch issues from GitLab API.
  * @param {*} projectId - The project ID to fetch issues from.
  * @param {*} token - The access token for authentication.
  * @returns {*} A promise that resolves to an array of issues.
  */
-export async function fetchIssues (projectId, token = process.env.GITLAB_TOKEN) {
+gitlabApi.fetchIssues = async (projectId, token = process.env.GITLAB_TOKEN) => {
   const response = await fetch(`https://gitlab.lnu.se/api/v4/projects/${projectId}/issues`, {
     headers: {
       Authorization: `Bearer ${token}`
@@ -26,7 +29,7 @@ export async function fetchIssues (projectId, token = process.env.GITLAB_TOKEN) 
  * @param {*} token Optional user token (fallback to default).
  * @returns {*} The response from the GitLab API.
  */
-export async function closeIssue (projectId, issueIid, token = process.env.GITLAB_TOKEN) {
+gitlabApi.closeIssue = async (projectId, issueIid, token = process.env.GITLAB_TOKEN) => {
   const res = await fetch(`https://gitlab.lnu.se/api/v4/projects/${projectId}/issues/${issueIid}`, {
     method: 'PUT',
     headers: {
@@ -53,7 +56,7 @@ export async function closeIssue (projectId, issueIid, token = process.env.GITLA
  * @param {*} token Optional user token (fallback to default).
  * @returns {*} The response from the GitLab API.
  */
-export async function commentOnIssue (projectId, issueIid, comment, token = process.env.GITLAB_TOKEN) {
+gitlabApi.commentOnIssue = async (projectId, issueIid, comment, token = process.env.GITLAB_TOKEN) => {
   const res = await fetch(`https://gitlab.lnu.se/api/v4/projects/${projectId}/issues/${issueIid}/notes`, {
     method: 'POST',
     headers: {
@@ -78,7 +81,7 @@ export async function commentOnIssue (projectId, issueIid, comment, token = proc
  * @param {*} token - Optional access token.
  * @returns {*} A promise that resolves to an array of commits.
  */
-export async function fetchCommits (projectId, token = process.env.GITLAB_TOKEN) {
+gitlabApi.fetchCommits = async (projectId, token = process.env.GITLAB_TOKEN) => {
   const response = await fetch(`https://gitlab.lnu.se/api/v4/projects/${projectId}/repository/commits`, {
     headers: {
       Authorization: `Bearer ${token}`
@@ -98,7 +101,7 @@ export async function fetchCommits (projectId, token = process.env.GITLAB_TOKEN)
  * @param projectId
  * @param token
  */
-export async function createWebhook (projectId, token) {
+gitlabApi.createWebhook = async (projectId, token) => {
   const res = await fetch(`https://gitlab.lnu.se/api/v4/projects/${projectId}/hooks`, {
     method: 'POST',
     headers: {
@@ -127,7 +130,8 @@ export async function createWebhook (projectId, token) {
  *
  * @param token
  */
-export async function fetchUserProjects (token) {
+gitlabApi.fetchUserProjects = async (token) => {
+  // The URL for fetching user projects is given in the GitLab API documentation.
   const response = await fetch('https://gitlab.lnu.se/api/v4/projects?membership=true&simple=true&per_page=100', {
     headers: {
       Authorization: `Bearer ${token}`

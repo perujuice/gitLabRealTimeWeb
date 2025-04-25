@@ -7,7 +7,7 @@ import wsServer from '../models/webSocket.js'
  * @param {*} res - The response object used to send a response back to GitLab.
  * @returns {*} errors if the token is invalid or the payload is not an issue event.
  */
-export function handleWebhook (req, res) {
+export default function handleWebhook (req, res) {
   const token = req.headers['x-gitlab-token'] // Extract the token from the request headers
 
   if (token !== process.env.WEBHOOK_SECRET) {

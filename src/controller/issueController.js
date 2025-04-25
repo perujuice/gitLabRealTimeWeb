@@ -1,17 +1,20 @@
-import { fetchIssues, closeIssue, commentOnIssue } from '../models/gitLabAPI.js'
+import gitLabApi from '../models/gitLabApi.js'
+
+const issueController = {}
+export default issueController
 
 /**
  * Method to fetch issues from GitHub repository
  * @param {*} req The request object
  * @param {*} res The response object
  */
-export async function getIssues (req, res) {
+issueController.getIssues = async (req, res) => {
   try {
     res.set('Cache-Control', 'no-store') // avoid caching
     const token = req.session?.gitlabToken || process.env.GITLAB_TOKEN
     const projectId = req.session.projectId || process.env.PROJECT_ID
 
-    const issues = await fetchIssues(projectId, token)
+    const issues = await gitLabApi.fetchIssues(projectId, token)
     res.json(issues)
   } catch (error) {
     console.error('Error fetching issues:', error)
@@ -25,19 +28,19 @@ export async function getIssues (req, res) {
  * @param {*} res The response object
  * @returns {*} Error message if any.
  */
-export async function closeIssueHandler (req, res) {
+issueController.closeIssueHandler = async (req, res) => {
   try {
     const token = req.session?.gitlabToken || process.env.GITLAB_TOKEN
     const projectId = req.session.projectId || process.env.PROJECT_ID
 
-    const allIssues = await fetchIssues(projectId, token)
+    const allIssues = await gitLabApi.fetchIssues(projectId, token)
     const issue = allIssues.find(issue => issue.id.toString() === req.params.id) // find the specific issue by ID to close.
 
     if (!issue) {
       return res.status(404).send('Issue not found')
     }
 
-    const closed = await closeIssue(projectId, issue.iid) // issue.iid is the internal ID used by GitLab
+    const closed = await gitLabApi.closeIssue(projectId, issue.iid) // issue.iid is the internal ID used by GitLab
     res.json(closed)
   } catch (error) {
     console.error('Error closing issue:', error)
@@ -51,13 +54,13 @@ export async function closeIssueHandler (req, res) {
  * @param {*} res The response object
  * @returns {*} Error message if any.
  */
-export async function commentOnIssueHandler (req, res) {
+issueController.commentOnIssueHandler = async (req, res) => {
   try {
     // Fetch all issues to find the specific issue by its global ID
     const token = req.session?.gitlabToken || process.env.GITLAB_TOKEN
     const projectId = req.session.projectId || process.env.PROJECT_ID
 
-    const allIssues = await fetchIssues(projectId, token)
+    const allIssues = await gitLabApi.fetchIssues(projectId, token)
     const issue = allIssues.find(issue => issue.id.toString() === req.params.id) // Match by global ID
 
     if (!issue) {
@@ -65,7 +68,7 @@ export async function commentOnIssueHandler (req, res) {
     }
 
     // Use the internal IID to add the comment
-    const comment = await commentOnIssue(projectId, issue.iid, req.body.comment)
+    const comment = await gitLabApi.commentOnIssue(projectId, issue.iid, req.body.comment)
     res.json(comment)
   } catch (error) {
     console.error('Error commenting on issue:', error)

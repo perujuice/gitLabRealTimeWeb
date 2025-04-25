@@ -1,12 +1,14 @@
-import { createWebhook, fetchUserProjects } from '../models/gitLabApi.js'
-import fetch from 'node-fetch'
+import gitLabApi from '../models/gitLabApi.js'
+
+const userController = {}
+export default userController
 
 /**
  *
  * @param req
  * @param res
  */
-export async function gitlabOAuthCallback (req, res) {
+userController.gitlabOAuthCallback = async (req, res) => {
   const code = req.query.code
   if (!code) return res.status(400).send('Missing OAuth code')
 
@@ -58,14 +60,14 @@ export async function gitlabOAuthCallback (req, res) {
  * @param req
  * @param res
  */
-export async function createWebhookHandler (req, res) {
+userController.createWebhookHandler = async (req, res) => {
   const token = req.session?.gitlabToken
   const projectId = req.params.id
 
   if (!token) return res.status(401).send('User not logged in')
 
   try {
-    const result = await createWebhook(projectId, token)
+    const result = await gitLabApi.createWebhook(projectId, token)
     req.session.projectId = projectId
     res.json({ success: true, webhook: result })
   } catch (err) {
@@ -79,12 +81,12 @@ export async function createWebhookHandler (req, res) {
  * @param req
  * @param res
  */
-export async function listUserProjects (req, res) {
+userController.listUserProjects = async (req, res) => {
   const token = req.session?.gitlabToken
   if (!token) return res.status(401).send('User not logged in')
 
   try {
-    const projects = await fetchUserProjects(token)
+    const projects = await gitLabApi.fetchUserProjects(token)
     res.json(projects)
   } catch (err) {
     console.error('Error listing projects:', err)
@@ -97,7 +99,7 @@ export async function listUserProjects (req, res) {
  * @param req
  * @param res
  */
-export async function logoutHandler (req, res) {
+userController.logoutHandler = async (req, res) => {
   req.session.destroy(err => {
     if (err) {
       console.error('Error destroying session:', err)
@@ -113,7 +115,7 @@ export async function logoutHandler (req, res) {
  * @param {*} req
  * @param {*} res
  */
-export function getCurrentUser (req, res) {
+userController.getCurrentUser = async (req, res) => {
   if (req.session.user) {
     res.json({
       loggedIn: true,
@@ -124,4 +126,21 @@ export function getCurrentUser (req, res) {
   } else {
     res.json({ loggedIn: false })
   }
+}
+
+/**
+ * Redirects the user to GitLab's OAuth authorization page
+ * This function is called when the user clicks the "Login with GitLab" button
+ * @param {*} req The request object
+ * @param {*} res The response object
+ */
+userController.redirectToGitLabOAuth = async (req, res) => {
+  const params = new URLSearchParams({
+    client_id: process.env.GITLAB_CLIENT_ID,
+    redirect_uri: process.env.GITLAB_REDIRECT_URI,
+    response_type: 'code',
+    scope: 'read_user'
+  })
+
+  res.redirect(`https://gitlab.lnu.se/oauth/authorize?${params.toString()}`)
 }
