@@ -1,4 +1,4 @@
-import { fetchCommits } from '../models/gitLabApi.js'
+import gitLabApi from '../models/gitLabApi.js'
 
 /**
  *
@@ -10,7 +10,7 @@ export async function getCommits (req, res) {
     const token = req.session?.gitlabToken || process.env.GITLAB_TOKEN
     const projectId = req.session.projectId || process.env.PROJECT_ID
 
-    const commits = await fetchCommits(projectId, token)
+    const commits = await gitLabApi.fetchCommits(projectId, token)
     res.json(commits)
   } catch (err) {
     console.error('Error fetching commits:', err)

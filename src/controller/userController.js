@@ -139,7 +139,7 @@ userController.redirectToGitLabOAuth = async (req, res) => {
     client_id: process.env.GITLAB_CLIENT_ID,
     redirect_uri: process.env.GITLAB_REDIRECT_URI,
     response_type: 'code',
-    scope: 'read_user'
+    scope: 'api'
   })
 
   res.redirect(`https://gitlab.lnu.se/oauth/authorize?${params.toString()}`)
