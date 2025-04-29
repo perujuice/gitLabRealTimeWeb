@@ -11,6 +11,10 @@ export default issueController
 issueController.getIssues = async (req, res) => {
   try {
     res.set('Cache-Control', 'no-store') // avoid caching
+    // Fetch all issues from the GitLab repository
+    // Use the token from the session or environment variable
+    // The session variable was needed once I implemented the GitLab OAuth flow, since the token is stored in the session.
+    // If the user is not logged in, the token will be undefined and the default token will be used from the environment variable.
     const token = req.session?.gitlabToken || process.env.GITLAB_TOKEN
     const projectId = req.session.projectId || process.env.PROJECT_ID
 

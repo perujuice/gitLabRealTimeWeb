@@ -24,5 +24,21 @@ npm start # runs in production (NODE_ENV)
 - Implemented a button to close an issue
 - Implemented commenting in issues, using gitLabs API
 - Implemented commits
-- GitLab 
+- GitLab Oauth
 
+## Basic workflow! 
+1. Client connects and the app will contact contact GitLab through their API
+
+## GitLab Oauth
+
+Initially the implementation of this follows the documentation for the authorization code flow: [GitLab Oauth 2.0 auth code flow](https://docs.gitlab.com/api/oauth2/#authorization-code-flow)
+
+
+### Documentation
+- The projects for a logged-in user are fetched using the
+[GitLab API docs for projects](https://docs.gitlab.com/api/projects/#list-all-projects)
+- The webhooks are created dynamically for each user project using [GitLab API for creating webhooks for user projects](https://docs.gitlab.com/api/project_webhooks/#add-a-webhook-to-a-project)
+
+Only projects with **owner** or **Maintainer** access level can be used for the required actions of this app so in the code I refer
+
+![Access levels](accessLevel.png)

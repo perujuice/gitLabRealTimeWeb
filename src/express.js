@@ -28,6 +28,7 @@ app.use(express.json())
 
 app.set('trust proxy', 1) // Trust first proxy
 
+// Set the session middleware with secure cookies
 app.use(session({
   secret: 'supersecretkey',
   resave: false,
