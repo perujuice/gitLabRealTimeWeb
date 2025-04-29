@@ -60,20 +60,29 @@ issueController.closeIssueHandler = async (req, res) => {
  */
 issueController.commentOnIssueHandler = async (req, res) => {
   try {
-    // Fetch all issues to find the specific issue by its global ID
+  // Validate the request body to ensure it contains a valid comment, and that the comment is a string.
+  // The comment should be between 1 and 1000 characters long.
+    const { comment } = req.body
+    if (typeof comment !== 'string' || comment.length === 0 || comment.length > 1000) {
+      return res.status(400).send('Invalid comment')
+    }
+
+    // Fetch the project ID and token from the session or environment variable.
+    // The session variable was needed once I implemented the GitLab OAuth flow, since the token is stored in the session.
     const token = req.session?.gitlabToken || process.env.GITLAB_TOKEN
     const projectId = req.session.projectId || process.env.PROJECT_ID
 
+    // Fetch all issues from the GitLab repository.
     const allIssues = await gitLabApi.fetchIssues(projectId, token)
-    const issue = allIssues.find(issue => issue.id.toString() === req.params.id) // Match by global ID
+    const issue = allIssues.find(issue => issue.id.toString() === req.params.id)
 
     if (!issue) {
-      return res.status(404).send('Issue not found') // Return 404 if the issue doesn't exist
+      return res.status(404).send('Issue not found')
     }
 
-    // Use the internal IID to add the comment
-    const comment = await gitLabApi.commentOnIssue(projectId, issue.iid, req.body.comment)
-    res.json(comment)
+    // Comment on the issue using the GitLab API.
+    const createdComment = await gitLabApi.commentOnIssue(projectId, issue.iid, comment, token)
+    res.json(createdComment)
   } catch (error) {
     console.error('Error commenting on issue:', error)
     res.status(500).send('Failed to add comment')

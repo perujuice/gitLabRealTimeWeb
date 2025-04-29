@@ -33,7 +33,7 @@ export default function handleWebhook (req, res) {
       updated_at: issue.updated_at
     }
 
-    wsServer.broadcast(message)
+    wsServer.broadcast(message) // Broadcast the message to all connected clients
     console.log('Issue webhook broadcasted:', message)
   }
 

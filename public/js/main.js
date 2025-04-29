@@ -3,7 +3,7 @@ import { fetchAndRenderIssues, formatIssueHtml } from './issues.js'
 import { renderCommit } from './commits.js'
 import { toggleCommentBox, handleCommentSubmit } from './comments.js'
 
-const eventList = document.getElementById('event-list') //  unified name
+const eventList = document.getElementById('event-list') // unified name
 
 connectWebSocket(eventList)
 
@@ -73,7 +73,7 @@ document.addEventListener('click', (e) => {
 fetch('/projects')
   // Check if the response is ok. If not, throw an error.
   .then(res => {
-    if (!res.ok) throw new Error('Not logged in or failed to fetch projects')
+    if (!res.ok) console.log('Failed to fetch projects.')
     return res.json()
   })
   // If the response is ok, return the projects data.
@@ -100,8 +100,7 @@ document.getElementById('set-project-btn').addEventListener('click', () => {
 
   fetch(`/projects/${projectId}/webhook`, { method: 'POST' })
     .then(res => {
-      if (!res.ok) throw new Error()
-      console.log('Webhook created! Events from this repo will now appear in real time.')
+      if (!res.ok) console.log('Webhook created! Events from this repo will now appear in real time.')
 
       // Clear DOM
       eventList.innerHTML = ''
