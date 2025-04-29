@@ -1,4 +1,5 @@
 import gitLabApi from '../models/gitLabApi.js'
+import crypto from 'crypto'
 
 const userController = {}
 export default userController
@@ -10,11 +11,15 @@ export default userController
  * @param {*} res The response object
  */
 userController.redirectToGitLabOAuth = async (req, res) => {
+  const state = crypto.randomBytes(16).toString('hex')
+  req.session.oauthState = state // Store the state in the session for later verification
+
   const params = new URLSearchParams({
     client_id: process.env.GITLAB_CLIENT_ID,
     redirect_uri: process.env.GITLAB_REDIRECT_URI,
     response_type: 'code',
-    scope: 'api'
+    scope: 'api',
+    state // Include the state parameter in the authorization request
   })
 
   res.redirect(`https://gitlab.lnu.se/oauth/authorize?${params.toString()}`)
@@ -30,8 +35,17 @@ userController.gitlabOAuthCallback = async (req, res) => {
   // This first lines are needed to get the code from the query parameters.
   // The code is sent by GitLab after the user authorizes the app.
   // The code is used to get the access token from GitLab, which is then used to fetch user info.
-  const code = req.query.code // Extract the OAuth code from the query parameters
-  if (!code) return res.status(400).send('Missing OAuth code')
+  // The state is used to prevent CSRF attacks.
+  // It should match the state stored in the session when the user was redirected to GitLab.
+  const { code, state } = req.query
+  if (!code || !state) return res.status(400).send('Missing OAuth code or state')
+
+  // Check if the state matches the one stored in the session
+  // This is important to prevent CSRF attacks.
+  if (state !== req.session.oauthState) {
+    console.error('Invalid OAuth state detected')
+    return res.status(400).send('Invalid OAuth state')
+  }
 
   // The try block starts by sending a POST request to GitLab's token endpoint to exchange the code for an access token.
   try {

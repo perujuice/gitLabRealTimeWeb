@@ -17,6 +17,7 @@ npm start # runs in production (NODE_ENV)
 
 ## Security Measures:
 - The express server uses the helmet package, for setting security related HTTP response headers.
+- Prevent CSRF (Cross-site request forgery) attacs by setting a state: "a value that can’t be predicted used by the client to maintain state between the request and callback". It is done in the GitLab Oauth flow, before anything happens, a state is set. 
 
 ## Extra requirements
 
