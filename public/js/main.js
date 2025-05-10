@@ -47,6 +47,8 @@ document.addEventListener('click', (e) => {
   const id = e.target.dataset.id
   if (!id) return
 
+  // Check if the clicked element is a close button
+  // If it is, close the issue
   if (e.target.classList.contains('close-btn')) {
     fetch(`/issues/${id}/close`, { method: 'POST' })
   }

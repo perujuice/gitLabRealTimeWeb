@@ -82,7 +82,7 @@ gitlabApi.commentOnIssue = async (projectId, issueIid, comment, token = process.
  * @returns {*} A promise that resolves to an array of commits.
  */
 gitlabApi.fetchCommits = async (projectId, token = process.env.GITLAB_TOKEN) => {
-  const response = await fetch(`https://gitlab.lnu.se/api/v4/projects/${projectId}/repository/commits`, {
+  const response = await fetch(`https://gitlab.lnu.se/api/v4/projects/${projectId}/repository/commits?per_page=100`, {
     headers: {
       Authorization: `Bearer ${token}`
     }
@@ -152,12 +152,5 @@ gitlabApi.fetchUserProjects = async (token) => {
 
   // Parse the response JSON
   const projects = await response.json()
-
-  // Filter projects where the user is an owner or maintainer
-  const filteredProjects = projects.filter(project => {
-    const accessLevel = project.permissions?.project_access?.access_level || project.permissions?.group_access?.access_level
-    return accessLevel === 40 || accessLevel === 50 // 40 = Maintainer, 50 = Owner
-  })
-
-  return filteredProjects
+  return projects
 }
