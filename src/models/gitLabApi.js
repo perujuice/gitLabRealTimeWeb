@@ -136,21 +136,31 @@ gitlabApi.createWebhook = async (projectId, token) => {
  * @returns {*} A promise that resolves to an array of user projects where the user is an owner or maintainer.
  */
 gitlabApi.fetchUserProjects = async (token) => {
-  // Fetch all projects where the user is a member
-  const response = await fetch('https://gitlab.lnu.se/api/v4/projects?membership=true&simple=true&per_page=100', {
+  // The URL endpoint to fetch all projects for the authenticated user.
+  // The 'membership=true' query parameter ensures that only projects the user is a member of are returned.
+  const response = await fetch('https://gitlab.lnu.se/api/v4/projects?membership=true&per_page=100&statistics=false', {
     headers: {
       Authorization: `Bearer ${token}`
     }
   })
 
-  // Check for errors in the response
+  // Check if the response is ok (status code 200).
+  // If not, log the error and return an empty array.
   if (!response.ok) {
     const errorText = await response.text()
     console.error('Failed to fetch user projects:', response.status, errorText)
     return []
   }
 
-  // Parse the response JSON
-  const projects = await response.json()
-  return projects
+  const allProjects = await response.json()
+
+  // The access level is checked using the 'permissions' object in the project data.
+  // The access level codes are: 0 = No access, 10 = Guest, 20 = Reporter, 30 = Developer, 40 = Maintainer, 50 = Owner
+  // I filter for projects where the user has at least MAINTAINER access (40).
+  const permittedProjects = allProjects.filter(p => {
+    const access = p.permissions?.project_access?.access_level || p.permissions?.group_access?.access_level || 0
+    return access >= 40 // Maintainer or higher
+  })
+
+  return permittedProjects
 }

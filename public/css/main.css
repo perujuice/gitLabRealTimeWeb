@@ -12,8 +12,9 @@ body {
   
   main {
     margin: 10px auto;
-    max-width: 800px;
+    max-width: 600px;
     padding: 5px;
+    width: 100%;
     flex: 1; /* Push the footer to the bottom */
   }
 
@@ -36,5 +37,38 @@ body {
   font-size: 0.9rem;
   cursor: pointer;
 }
-  
+
+#project-picker {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin: 16px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#project-picker label {
+  font-weight: bold;
+}
+
+#project-picker select,
+#project-picker button {
+  font-size: 0.95rem;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+#project-picker select {
+  max-width: 250px;
+  width: 100%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
   

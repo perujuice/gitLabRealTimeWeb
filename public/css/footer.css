@@ -16,6 +16,6 @@ footer .copyright {
     bottom: 5px; /* Align to the bottom of the footer */
     right: 10px; /* Align to the right of the footer */
     color: rgb(253, 216, 216);
-    font-size: 0.8rem; /* Optional: Adjust font size for better fit */
+    font-size: 0.8rem; /* Adjust font size for better fit */
     margin: 0; /* Remove any default margin from <p> */
 }

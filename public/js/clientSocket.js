@@ -6,9 +6,8 @@ import { renderCommit } from './commits.js'
  * @param {*} container - The container element where issues will be rendered.
  */
 export default function connectWebSocket (container) {
-  // Convert 'http' or 'https' to 'ws' or 'wss' to match the current protocol.
-  // This ensures WebSocket works both in local (http) and production (https) environments.
-  const socket = new WebSocket(`${window.location.protocol.replace('http', 'ws')}//${window.location.host}`)
+  // Create a new WebSocket connection to the server.
+  const socket = new WebSocket('wss://cscloud9-62.lnu.se')
 
   socket.onopen = () => console.log('WebSocket connection opened')
 

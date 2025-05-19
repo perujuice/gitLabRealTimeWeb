@@ -54,7 +54,7 @@ export function fetchAndRenderIssues (container) {
       data
         .filter(i => i.state === 'opened')
         .forEach(issue => {
-          if (container.querySelector(`li[data-id="${issue.id}"]`)) return // ✅ prevent dupes
+          if (container.querySelector(`li[data-id="${issue.id}"]`)) return // prevent duplicates
 
           const li = document.createElement('li')
           li.setAttribute('data-id', issue.id)
