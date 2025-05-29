@@ -13,7 +13,7 @@ const server = http.createServer(app) // Create an HTTP server using Express
 
 app.use(helmet()) // Use Helmet for security, setting various HTTP headers
 
-// Initialize WebSocket server with the HTTP server
+// Initialize WebSocket server with the HTTP server that will handle WebSocket connections
 server.on('upgrade', (req, socket, head) => {
   wsServer.handleUpgrade(req, socket, head, (ws) => {
     wsServer.emit('connection', ws, req)
@@ -26,7 +26,7 @@ app.use(express.static('public'))
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 
-app.set('trust proxy', 1) // Trust first proxy
+app.set('trust proxy', 1) // Trust first proxy (needed for secure cookies in production)
 
 // Set the session middleware with secure cookies
 app.use(session({

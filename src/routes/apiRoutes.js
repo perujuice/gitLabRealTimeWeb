@@ -7,12 +7,12 @@ import userController from '../controller/userController.js'
 const router = express.Router()
 export default router
 
-// These routes are related to simple GitHub issues and commits.
-router.get('/issues', issueController.getIssues) // Fetch issues from the GitHub repository
+// These routes are related to simple GitLab issues and commits.
+router.get('/issues', issueController.getIssues) // Fetch issues from the GitLab repository
 router.post('/issues/:id/close', issueController.closeIssueHandler) // Close an issue by its ID
 router.post('/issues/:id/comments', issueController.commentOnIssueHandler) // Add a comment to an issue by its ID
-router.get('/commits', getCommits) // Fetch commits from the GitHub repository
-router.post('/webhook', handleWebhook) // Handle incoming webhook events from GitHub
+router.get('/commits', getCommits) // Fetch commits from the GitLab repository
+router.post('/webhook', handleWebhook) // Handle incoming webhook events from GitLab
 
 // All of the routes below are related to GitLab OAuth authentication and user management.
 router.get('/auth/gitlab', userController.redirectToGitLabOAuth) // Redirect to GitLab for OAuth authentication
