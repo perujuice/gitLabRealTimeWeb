@@ -1,8 +1,13 @@
 # B3 Production
 
-### URL to the server
-<a>https://cscloud9-62.lnu.se/</a>
+### URL to the web application (I simply deployed on render for now)
+<a>https://gitlabrealtimeweb.onrender.com/</a>
 
+## Description of the project
+
+This was a final project for my web development course where I had to design and develop a node web application that can fetch and render issues from gitLab, and further broadcast any updates or changes in real time using webhooks and the websocket. I further developed the app by adding proper authentication where users can manage gitLab events from their own personal repositories.
+
+![alt text](image.png)
 
 ## Basic Requirements Implemented
 
