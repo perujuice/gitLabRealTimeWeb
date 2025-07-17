@@ -12,11 +12,11 @@ export default userController
  */
 userController.redirectToGitLabOAuth = async (req, res) => {
   const state = crypto.randomBytes(16).toString('hex')
-  req.session.oauthState = state // Store the state in the session for later verification
+  req.session.oauthState = state // Store the state in the session for later verification to prevent CSRF attacks
 
   const params = new URLSearchParams({
     client_id: process.env.GITLAB_CLIENT_ID,
-    redirect_uri: process.env.GITLAB_REDIRECT_URI,
+    redirect_uri: process.env.GITLAB_REDIRECT_URI, // Calls the oauth/callback
     response_type: 'code',
     scope: 'api',
     state // Include the state parameter in the authorization request
