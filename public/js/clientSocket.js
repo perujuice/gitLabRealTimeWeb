@@ -7,7 +7,7 @@ import { renderCommit } from './commits.js'
  */
 export default function connectWebSocket (container) {
   // Create a new WebSocket connection to the server.
-  const socket = new WebSocket('wss://gitlabrealtimeweb.onrender.com/')
+  const socket = new WebSocket(`${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}`)
 
   socket.onopen = () => console.log('WebSocket connection opened')
 
